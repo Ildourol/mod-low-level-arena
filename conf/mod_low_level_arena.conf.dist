@@ -1,0 +1,157 @@
+#
+# Copyright (C) 2026+ AzerothCore Project
+# Released under GNU AGPL v3 license.
+#
+
+[worldserver]
+
+###################################################################################################
+# LOW LEVEL ARENA CONFIGURATION
+###################################################################################################
+#
+#    LowLevelArena.Enable
+#        Description: Enable or disable the Low-Level Arena module.
+#        Default:     1 - Enabled
+#                     0 - Disabled
+#
+
+LowLevelArena.Enable = 1
+
+#
+#    LowLevelArena.Brackets
+#        Description: Configured arena brackets formatted as "min-max,min-max,...".
+#        Default:     "10-19,20-29,30-39,40-49,50-59,60-69,70-79,80-80"
+#
+
+LowLevelArena.Brackets = "10-19,20-29,30-39,40-49,50-59,60-69,70-79,80-80"
+
+#
+#    LowLevelArena.Enable2v2
+#        Description: Enable 2v2 arena queues for low-level brackets.
+#        Default:     1 - Enabled
+#                     0 - Disabled
+#
+
+LowLevelArena.Enable2v2 = 1
+
+#
+#    LowLevelArena.Enable3v3
+#        Description: Enable 3v3 arena queues for low-level brackets.
+#        Default:     1 - Enabled
+#                     0 - Disabled
+#
+
+LowLevelArena.Enable3v3 = 1
+
+#
+#    LowLevelArena.Enable5v5
+#        Description: Enable 5v5 arena queues for low-level brackets.
+#        Default:     1 - Enabled
+#                     0 - Disabled
+#
+
+LowLevelArena.Enable5v5 = 1
+
+#
+#    LowLevelArena.Skirmish.Enable
+#        Description: Enable skirmish (unrated) arena queues for low-level brackets.
+#        Default:     1 - Enabled
+#                     0 - Disabled
+#
+
+LowLevelArena.Skirmish.Enable = 1
+
+#
+#    LowLevelArena.Rated.Enable
+#        Description: Enable rated arena queues for low-level brackets.
+#        Default:     0 - Disabled (Skirmish recommended for low-level)
+#                     1 - Enabled
+#
+
+LowLevelArena.Rated.Enable = 0
+
+#
+#    LowLevelArena.AnnounceQueue
+#        Description: Announce in world chat when a player queues for a low-level arena.
+#        Default:     0 - Disabled
+#                     1 - Enabled
+#
+
+LowLevelArena.AnnounceQueue = 0
+
+#
+#    LowLevelArena.NPC.Enable
+#        Description: Enable the dedicated Low-Level Arena Master NPC.
+#        Default:     1 - Enabled
+#                     0 - Disabled
+#
+
+LowLevelArena.NPC.Enable = 1
+
+#
+#    LowLevelArena.NPC.Entry
+#        Description: Creature template entry ID for the Low-Level Arena Master.
+#        Default:     700100
+#
+
+LowLevelArena.NPC.Entry = 700100
+
+#
+#    LowLevelArena.NPC.WorldSpawn.Enable
+#        Description: Enable permanent world spawns of the Low-Level Arena Master in major cities.
+#        Default:     1 - Enabled
+#                     0 - Disabled
+#
+
+LowLevelArena.NPC.WorldSpawn.Enable = 1
+
+#
+#    LowLevelArena.NPC.SummonSpell.Enable
+#        Description: Teach players the spell to summon a temporary Low-Level Arena Master on login.
+#        Default:     1 - Enabled
+#                     0 - Disabled
+#
+
+LowLevelArena.NPC.SummonSpell.Enable = 1
+
+#
+#    LowLevelArena.NPC.SummonSpell.SpellId
+#        Description: Spell ID used to summon the temporary Low-Level Arena Master (General spellbook).
+#        Default:     56189 ("Sound War Horn")
+#
+
+LowLevelArena.NPC.SummonSpell.SpellId = 56189
+
+#
+#    LowLevelArena.NPC.DespawnSpell.Enable
+#        Description: Teach players the spell to despawn their summoned Low-Level Arena Master on login.
+#        Default:     1 - Enabled
+#                     0 - Disabled
+#
+
+LowLevelArena.NPC.DespawnSpell.Enable = 1
+
+#
+#    LowLevelArena.NPC.DespawnSpell.SpellId
+#        Description: Spell ID used to dismiss/despawn the summoned Low-Level Arena Master (General spellbook).
+#        Default:     43014 ("Despawn Self")
+#
+
+LowLevelArena.NPC.DespawnSpell.SpellId = 43014
+
+#
+#    LowLevelArena.NPC.SummonDuration
+#        Description: Duration in seconds that a summoned Arena Master remains before despawning automatically.
+#        Default:     900 (15 minutes)
+#
+
+LowLevelArena.NPC.SummonDuration = 900
+
+#
+#    LowLevelArena.Debug
+#        Description: Enable verbose debug logging for low-level arena operations.
+#        Default:     0 - Disabled
+#                     1 - Enabled
+#
+
+LowLevelArena.Debug = 0

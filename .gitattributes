@@ -1,0 +1,10 @@
+* text=auto eol=lf
+*.conf text
+*.conf.dist text
+*.cmake text
+*.sh text
+*.sql text
+*.cpp text
+*.h text
+*.md text
+*.json text

@@ -1,0 +1,19 @@
+# Config files
+conf/*.conf
+!conf/*.conf.dist
+
+# Build / IDE
+build/
+bin/
+.vscode/
+.idea/
+*.user
+*.suo
+*.userosv
+*.sln.docstates
+*.patch
+*.diff
+*.orig
+*.rej
+*~
+*.bak
