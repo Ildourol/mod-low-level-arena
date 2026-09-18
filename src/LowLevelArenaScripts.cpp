@@ -11,6 +11,7 @@
 #include "GossipDef.h"
 #include "Player.h"
 #include "ScriptedGossip.h"
+#include "ScriptMgr.h"
 #include "Opcodes.h"
 #include "ServerScript.h"
 #include "Spell.h"
