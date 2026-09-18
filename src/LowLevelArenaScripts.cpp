@@ -11,10 +11,13 @@
 #include "GossipDef.h"
 #include "Player.h"
 #include "ScriptedGossip.h"
-#include "ScriptMgr.h"
+#include "Opcodes.h"
+#include "ServerScript.h"
 #include "Spell.h"
 #include "SpellInfo.h"
 #include "World.h"
+#include "WorldPacket.h"
+#include "WorldSession.h"
 #include "WorldSessionMgr.h"
 
 enum LowLevelArenaGossipSender : uint32
@@ -61,12 +64,23 @@ public:
 
         if (sLowLevelArenaConfig->SummonSpellEnable && !player->HasSpell(sLowLevelArenaConfig->SummonSpellId))
         {
-            player->learnSpell(sLowLevelArenaConfig->SummonSpellId, false);
+            sLowLevelArenaMgr->TeachSpell(player, sLowLevelArenaConfig->SummonSpellId);
         }
 
         if (sLowLevelArenaConfig->DespawnSpellEnable && !player->HasSpell(sLowLevelArenaConfig->DespawnSpellId))
         {
-            player->learnSpell(sLowLevelArenaConfig->DespawnSpellId, false);
+            sLowLevelArenaMgr->TeachSpell(player, sLowLevelArenaConfig->DespawnSpellId);
+        }
+    }
+
+    void OnPlayerLearnSpell(Player* player, uint32 spellId) override
+    {
+        if (!sLowLevelArenaConfig->Enable || !player)
+            return;
+
+        if (sLowLevelArenaMgr->IsArenaSpell(spellId))
+        {
+            sLowLevelArenaMgr->MarkAutoLearningSpell(player->GetGUID(), spellId);
         }
     }
 
@@ -264,10 +278,49 @@ public:
     }
 };
 
+class LowLevelArenaServerScript : public ServerScript
+{
+public:
+    LowLevelArenaServerScript() : ServerScript("LowLevelArenaServerScript") { }
+
+    bool CanPacketReceive(WorldSession* session, WorldPacket const& packet) override
+    {
+        if (!sLowLevelArenaConfig->Enable || !session)
+            return true;
+
+        if (packet.GetOpcode() == CMSG_SET_ACTION_BUTTON)
+        {
+            WorldPacket copy = packet;
+            uint8 button;
+            uint32 packetData;
+            copy >> button >> packetData;
+
+            uint32 action = ACTION_BUTTON_ACTION(packetData);
+            uint8 type = ACTION_BUTTON_TYPE(packetData);
+
+            if (type == ACTION_BUTTON_SPELL && sLowLevelArenaMgr->IsArenaSpell(action))
+            {
+                if (Player* player = session->GetPlayer())
+                {
+                    if (sLowLevelArenaMgr->IsAutoLearningSpell(player->GetGUID(), action))
+                    {
+                        sLowLevelArenaMgr->ClearAutoLearningSpell(player->GetGUID(), action);
+                        player->SendActionButtons(1);
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+};
+
 void AddLowLevelArenaScripts()
 {
     new LowLevelArenaWorldScript();
     new LowLevelArenaPlayerScript();
     new LowLevelArenaSpellScript();
+    new LowLevelArenaServerScript();
     new npc_low_level_arena_master();
 }

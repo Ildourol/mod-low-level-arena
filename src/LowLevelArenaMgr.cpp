@@ -125,6 +125,8 @@ void LowLevelArenaMgr::HandlePlayerLogout(Player* player)
 
     std::lock_guard<std::mutex> lock(_mutex);
 
+    _autoLearningSpells.erase(player->GetGUID());
+
     auto it = _summonedNpcs.find(player->GetGUID());
     if (it == _summonedNpcs.end())
         return;
@@ -255,4 +257,62 @@ bool LowLevelArenaMgr::GetBracketForLevel(uint8 level, uint8& outMin, uint8& out
     }
 
     return false;
+}
+
+bool LowLevelArenaMgr::IsArenaSpell(uint32 spellId) const
+{
+    return (sLowLevelArenaConfig->SummonSpellEnable && spellId == sLowLevelArenaConfig->SummonSpellId) ||
+           (sLowLevelArenaConfig->DespawnSpellEnable && spellId == sLowLevelArenaConfig->DespawnSpellId);
+}
+
+bool LowLevelArenaMgr::IsAutoLearningSpell(ObjectGuid const& playerGuid, uint32 spellId) const
+{
+    std::lock_guard<std::mutex> lock(const_cast<std::mutex&>(_mutex));
+    auto itr = _autoLearningSpells.find(playerGuid);
+    if (itr != _autoLearningSpells.end())
+        return itr->second.find(spellId) != itr->second.end();
+    return false;
+}
+
+void LowLevelArenaMgr::MarkAutoLearningSpell(ObjectGuid const& playerGuid, uint32 spellId)
+{
+    std::lock_guard<std::mutex> lock(_mutex);
+    _autoLearningSpells[playerGuid].insert(spellId);
+}
+
+void LowLevelArenaMgr::ClearAutoLearningSpell(ObjectGuid const& playerGuid, uint32 spellId)
+{
+    std::lock_guard<std::mutex> lock(_mutex);
+    auto itr = _autoLearningSpells.find(playerGuid);
+    if (itr != _autoLearningSpells.end())
+    {
+        itr->second.erase(spellId);
+        if (itr->second.empty())
+            _autoLearningSpells.erase(itr);
+    }
+}
+
+void LowLevelArenaMgr::TeachSpell(Player* player, uint32 spellId)
+{
+    if (!player || !spellId || player->HasSpell(spellId))
+        return;
+
+    MarkAutoLearningSpell(player->GetGUID(), spellId);
+
+    player->learnSpell(spellId, false);
+
+    bool changed = false;
+    for (uint8 b = 0; b < MAX_ACTION_BUTTONS; ++b)
+    {
+        if (ActionButton const* ab = player->GetActionButton(b))
+        {
+            if (ab->GetAction() == spellId && ab->GetType() == ACTION_BUTTON_SPELL)
+            {
+                player->removeActionButton(b);
+                changed = true;
+            }
+        }
+    }
+    if (changed)
+        player->SendActionButtons(1);
 }

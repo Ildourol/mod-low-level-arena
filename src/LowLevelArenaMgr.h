@@ -10,6 +10,7 @@
 #include "ObjectGuid.h"
 #include <mutex>
 #include <unordered_map>
+#include <unordered_set>
 
 class Creature;
 class Player;
@@ -37,11 +38,18 @@ public:
     [[nodiscard]] bool IsSummonedBy(Player const* player, Creature const* creature);
     bool GetBracketForLevel(uint8 level, uint8& outMin, uint8& outMax, uint8& outBracketId) const;
 
+    [[nodiscard]] bool IsArenaSpell(uint32 spellId) const;
+    [[nodiscard]] bool IsAutoLearningSpell(ObjectGuid const& playerGuid, uint32 spellId) const;
+    void MarkAutoLearningSpell(ObjectGuid const& playerGuid, uint32 spellId);
+    void ClearAutoLearningSpell(ObjectGuid const& playerGuid, uint32 spellId);
+    void TeachSpell(Player* player, uint32 spellId);
+
 private:
     LowLevelArenaMgr() = default;
 
     std::mutex _mutex;
     std::unordered_map<ObjectGuid, SummonedNpcRecord> _summonedNpcs;
+    std::unordered_map<ObjectGuid, std::unordered_set<uint32>> _autoLearningSpells;
     uint32 _cleanupTimer{5000};
 };
 
